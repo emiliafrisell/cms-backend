@@ -1,0 +1,20 @@
+{
+  "name": "activout/data-interaction-skeleton",
+  "description": "Skeleton for FED22STO Data Interaction",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Neha Hirve",
+      "email": "nehahirve@hyperisland.se"
+    }
+  ],
+  "require": {
+    "php": "^7.4",
+    "ext-json": "*",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*"
+  }
+
+
+}
