@@ -19,10 +19,10 @@ class BlogPost {
     $this->conn = $dbPDO;
   }
 
-  // QUERY METHODS
+  // QUERY METHODS //
 
   // get all the posts
-  public function getAllPosts () {
+  public function getAllPosts(): PDOStatement {
     //write the SQL query
     $query = "select * from blog_posts order by created_at desc";
 
@@ -32,4 +32,25 @@ class BlogPost {
     return $statement;
   }
 
+  // get a single post
+  public function getPost($id) {
+    $query = "select * from blog_posts where id=:id"; // don't use the $symbol for security reasons.
+    $statement = $this->conn->prepare($query);
+    $statement->execute(compact('id')); //passing in the id to the SQL statement
+    $record = $statement->fetch(PDO::FETCH_ASSOC);
+
+    if ($record) { // if the record exists
+      extract($record);
+      $post = array(
+        "id" => $id,
+        "title" => $title,
+        "body" => $body,
+        "created_at" => $created_at
+      );
+      //directly returning PHP array here, instead of the PDO statement, it's easier
+      return $post;
+    } else {
+      return null;
+    }
+  }
 }

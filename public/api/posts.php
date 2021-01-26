@@ -21,10 +21,19 @@ $post = new BlogPost($dbPDO);
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') { //this is how you find out the HTTP method used
 
+  // this block of code checks if the client has sent in in an id parameter, if it has, then i get just a single post instead.
+  if (isset($_GET['id'])) {
+    $post->id = $_GET['id'] + 0;
+    $result = $post->getPost($post->id);
+    echo json_encode($result);
+    return;
+  }
+
+  // if not, then i get all the posts and convert them to an array.
   $result = $post->getAllPosts(); // this returns a PDO statement that we need to turn into json
   $rows = $result->rowCount(); // executed PDO statements have a row count like the SQL table
 
-  // this next bit is essentially translating the PDO statement to PHP object then converting to JSON
+  // this next bit is essentially translating the PDO statement to PHP array then converting to JSON
   if ($rows > 0) {
     $posts_array = array();
     $posts_array['posts'] = array();
@@ -40,9 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') { //this is how you find out the HTTP 
 
       array_push($posts_array["posts"], $post);
     }
-    echo json_encode($posts_array); // encode PHP object as JSON and output
+    echo json_encode($posts_array); // encode PHP associative array as JSON and output
 
   } else {
+    //have to encode the PHP array as JSON even for the error message!
     echo json_encode(array('message' => 'Nothing here, go take a hike.'));
   }
 };
