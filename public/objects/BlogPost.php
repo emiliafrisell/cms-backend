@@ -53,4 +53,23 @@ class BlogPost {
       return null;
     }
   }
+
+  //create a post
+  public function createPost() {
+
+    $query = "insert into blog_posts set body=:body, title=:title";
+    $statement = $this->conn->prepare($query);
+
+    $this->title = htmlspecialchars(strip_tags($this->title)); // clean up so no spec. chars
+    $this->body = htmlspecialchars(strip_tags($this->body));
+
+    //binding data the SQL statement, we do so b/c of SQL injection but idk if there's a more efficient way to do this
+    $statement->bindParam(":body", $this->body);
+    $statement->bindParam(":title", $this->title);
+
+    if ($statement->execute()) {
+      return true;
+    }
+    return false;
+  }
 }

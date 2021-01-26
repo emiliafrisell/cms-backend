@@ -6,6 +6,13 @@ declare(strict_types=1); // enforces strict types for PHP, like typescript
 header("Access-Control-Allow-Origin: *"); // completely public, allows CORS
 header("Content-Type: application/json; charset=UTF-8"); // content type is JSON
 
+// for POST requests we need to add more headers --
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
+  // i don't fully get this header but apparently it's for security, cross-scripting attacks
+};
+
+
 //include files, there's a better way to do this w/ autoload but whatever.
 include_once '../config/Database.php';
 include_once '../objects/BlogPost.php';
@@ -19,6 +26,8 @@ $dbPDO = (new Database())->getConnection();
 $post = new BlogPost($dbPDO);
 
 
+
+// LOGIC FOR GET REQUESTS
 if ($_SERVER['REQUEST_METHOD'] === 'GET') { //this is how you find out the HTTP method used
 
   // this block of code checks if the client has sent in in an id parameter, if it has, then i get just a single post instead.
@@ -56,4 +65,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') { //this is how you find out the HTTP 
     echo json_encode(array('message' => 'Nothing here, go take a hike.'));
   }
 };
+
+// LOGIC FOR POST REQUEST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  // reading in the JSON data (you MUST stringify the request body as JSON on the frontend for this to work)
+  $data = json_decode(file_get_contents("php://input"));
+
+  $post->title = $data->title;
+  $post->body = $data->body;
+//  $post->created_at = date('Y-m-d H:i:s'); // PHP apparently has a better date function than JS.
+  // I don't use the date here since mySQL will automatically set the date
+
+  if ($post->createPost()) {
+    echo 'success';
+    $post->getAllPosts();
+  } else {
+    echo json_encode(array('message' => 'Something went wrong and nothing was created.'));
+  }
+}
+
+
 
