@@ -7,7 +7,11 @@ header("Access-Control-Allow-Origin: *"); // completely public, allows CORS
 header("Content-Type: application/json; charset=UTF-8"); // content type is JSON
 
 // for POST requests we need to add more headers --
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (
+  $_SERVER['REQUEST_METHOD'] === 'POST' ||
+  $_SERVER['REQUEST_METHOD'] === 'DELETE' ||
+  $_SERVER['REQUEST_METHOD'] === 'PUT'
+) {
   header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
   // i don't fully get this header but apparently it's for security, cross-scripting attacks
 };
@@ -24,7 +28,6 @@ $dbPDO = (new Database())->getConnection();
 
 // initialize object using the connector we just created
 $post = new BlogPost($dbPDO);
-
 
 
 // LOGIC FOR GET REQUESTS
