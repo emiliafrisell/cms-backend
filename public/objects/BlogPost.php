@@ -72,4 +72,19 @@ class BlogPost {
     }
     return false;
   }
+
+  // delete a post
+  public function deletePost($id) {
+    $query = "delete from blog_posts where id=:id"; // don't use the $symbol for security reasons.
+    $statement = $this->conn->prepare($query);
+    if ($statement->execute(compact('id'))) {
+      return true;
+    }
+    return false;
+  }
+
+  // update a post
+  public function updatePost($id) {
+
+  }
 }

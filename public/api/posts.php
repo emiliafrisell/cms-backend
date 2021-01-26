@@ -84,5 +84,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 }
 
+// LOGIC FOR DELETE REQUEST
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+  // reading in the JSON data (you MUST stringify the request body as JSON on the frontend for this to work)
+  $data = json_decode(file_get_contents("php://input"));
+
+  $post->id = $data->id;
+
+  if ($post->deletePost($post->id)) {
+    echo 'success';
+  } else {
+    echo json_encode(array('message' => 'Something went wrong and nothing was deleted.'));
+  }
+}
+
+// LOGIC FOR PUT REQUEST
 
 
