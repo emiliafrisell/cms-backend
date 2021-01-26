@@ -100,4 +100,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
 
 // LOGIC FOR PUT REQUEST
 
+if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+  $data = json_decode(file_get_contents("php://input"));
+
+  $post->id = $data->id;
+  $post->title = $data->title;
+  $post->body = $data->body;
+
+  if ($post->updatePost($post->id)) {
+    echo 'success, record updated';
+  } else {
+    echo json_encode(array('message' => 'Something went wrong and nothing was updated.'));
+  }
+}
+
+
+
 

@@ -33,7 +33,7 @@ class BlogPost {
   }
 
   // get a single post
-  public function getPost($id) {
+  public function getPost($id): ?array { //setting the return type to null OR an array
     $query = "select * from blog_posts where id=:id"; // don't use the $symbol for security reasons.
     $statement = $this->conn->prepare($query);
     $statement->execute(compact('id')); //passing in the id to the SQL statement
@@ -55,7 +55,7 @@ class BlogPost {
   }
 
   //create a post
-  public function createPost() {
+  public function createPost(): bool {
 
     $query = "insert into blog_posts set body=:body, title=:title";
     $statement = $this->conn->prepare($query);
@@ -74,7 +74,7 @@ class BlogPost {
   }
 
   // delete a post
-  public function deletePost($id) {
+  public function deletePost($id): bool {
     $query = "delete from blog_posts where id=:id"; // don't use the $symbol for security reasons.
     $statement = $this->conn->prepare($query);
     if ($statement->execute(compact('id'))) {
@@ -84,7 +84,21 @@ class BlogPost {
   }
 
   // update a post
-  public function updatePost($id) {
+  public function updatePost($id): bool {
+    $query = "update blog_posts set title=:title, body=:body where id=:id";
+    $statement = $this->conn->prepare($query);
 
+    $this->title = htmlspecialchars(strip_tags($this->title)); // clean up so no spec. chars
+    $this->body = htmlspecialchars(strip_tags($this->body));
+
+    //binding data the SQL statement, we do so b/c of SQL injection but idk if there's a more efficient way to do this
+    $statement->bindParam(":body", $this->body);
+    $statement->bindParam(":title", $this->title);
+    $statement->bindParam(":id", $this->id);
+
+    if ($statement->execute()) {
+      return true;
+    }
+    return false;
   }
 }
